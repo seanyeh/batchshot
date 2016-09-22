@@ -71,12 +71,12 @@ class App:
         self.image_label.configure(image=self.img)
 
 
-    def get_counter(self):
-        return ("0000" + str(self.counter))[-5:]
+    def counter_to_string(self, index):
+        return ("0000" + str(index))[-5:]
 
 
     def get_image_name(self, index):
-        return os.path.join(self.tmpdir.name, str(index) + ".png")
+        return os.path.join(self.tmpdir.name, self.counter_to_string(index) + ".png")
 
 
     def get_current_image_name(self):
@@ -111,6 +111,11 @@ class App:
 
     def save(self):
         savedir = filedialog.askdirectory()
+
+        # If no directory chosen
+        if not savedir:
+            return
+
         destdir = os.path.join(savedir, "_batchshot_images")
 
         shutil.copytree(self.tmpdir.name, destdir)
