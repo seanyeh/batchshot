@@ -14,6 +14,9 @@ from PIL import Image, ImageTk
 
 WIDTH, HEIGHT = 640, 360
 
+OUTPUT_WIDTH, OUTPUT_HEIGHT = 1280, 720
+
+
 class App:
     def __init__(self, master):
         self.frame = Frame(master)
@@ -92,7 +95,16 @@ class App:
 
     def next(self):
         self.master.withdraw()
-        subprocess.run(["gm", "import", self.get_current_image_name()])
+
+        temp = tempfile.NamedTemporaryFile(suffix=".png")
+        subprocess.run(["gm", "import", temp.name])
+
+        gm_size = "%dx%d" % (OUTPUT_WIDTH, OUTPUT_HEIGHT)
+        subprocess.run(["convert", temp.name, "-gravity", "center",
+            "-resize", gm_size, "-extent", gm_size,
+            self.get_current_image_name()])
+
+
         self.master.deiconify()
 
         self.counter += 1
